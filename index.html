@@ -490,7 +490,8 @@ function renderLib(){
   const g = $('#grid');
   if (S.mode === 'pending'){ g.innerHTML = `<div class="empty" style="grid-column:1/-1">Loading your plays…</div>`; return; }
   if (!list.length){
-    g.innerHTML = `<div class="empty" style="grid-column:1/-1">${Object.keys(S.plays).length ? 'No plays match these filters.' : (S.canWrite ? 'No plays yet. Tap <b>+ New play</b> to draw your first one.' : 'No plays have been added yet.')}</div>`;
+    g.innerHTML = `<div class="empty" style="grid-column:1/-1">${Object.keys(S.plays).length ? 'No plays match these filters.' : (S.canWrite ? 'No plays yet. Tap <b>+ New play</b> to draw your first one.<br><br><button class="btn" id="addSamples">Add 3 sample plays + Chargers/Cardinals playbooks</button>' : 'No plays have been added yet.')}</div>`;
+    const as = $('#addSamples'); if (as) as.onclick = addSamples;
     return;
   }
   g.innerHTML = list.map(p => `<div class="card">
@@ -550,6 +551,34 @@ function booksDialog(){
     b.querySelector('#doneBooks').onclick = () => { closeModal(); renderLib(); };
   };
   modal('', draw);
+}
+
+
+/* ---------- sample plays ---------- */
+async function addSamples(){
+  const btn = $('#addSamples'); if (btn) btn.disabled = true;
+  const P = (id, l, c, x, y, read = 0) => ({id, label:l, color:c, x, y, read, d:false});
+  const R = (route, curve = false) => ({route, motion:[], curve});
+  const books = [{id:'bookChargers', name:'Chargers'}, {id:'bookCardinals', name:'Cardinals'}];
+  const plays = [
+    {id:'playSample1', name:'Trips Right – Flood', fmt:'5v5', formation:'Trips Right', goal:0, tags:['3rd','Medium','Pass'], books:['bookChargers','bookCardinals'],
+     notes:'Z clears out deep. Y runs a 7-yard out, H runs the flat underneath. QB reads Y → H → Z, C is the check-down.',
+     players:[P('s1c','C','#64748b',150,248,4), P('s1q','Q','#2563eb',150,292), P('s1h','H','#ea580c',195,256,2), P('s1y','Y','#eab308',235,256,1), P('s1z','Z','#16a34a',275,248,3)],
+     routes:{s1z:R([[275,80]]), s1y:R([[235,170],[290,170]]), s1h:R([[215,230],[285,220]], true), s1c:R([[150,200],[140,205]])}},
+    {id:'playSample2', name:'Red Zone – Fade/Slant', fmt:'5v5', formation:'Spread', goal:10, tags:['Red Zone','Pass','3rd','Short'], books:['bookChargers'],
+     notes:'X fades to the back pylon, H slants under it, Z runs a corner. Throw it high on the fade.',
+     players:[P('s2c','C','#64748b',150,248), P('s2q','Q','#2563eb',150,292), P('s2x','X','#dc2626',25,248,1), P('s2h','H','#ea580c',90,256,2), P('s2z','Z','#16a34a',275,248,3)],
+     routes:{s2x:R([[25,190],[40,100]], true), s2h:R([[90,225],[155,175]]), s2z:R([[275,195],[295,140]]), s2c:R([[150,210]])}},
+    {id:'playSample3', name:'Hook & Lateral', fmt:'5v5', formation:'Spread', goal:0, tags:['Trick','4th','Long','Pass'], books:['bookCardinals'],
+     notes:'H runs an 8-yard hook and catches it. X sprints underneath and takes the pitch from H. Z runs off the safety.',
+     players:[P('s3c','C','#64748b',150,248), P('s3q','Q','#2563eb',150,292), P('s3x','X','#dc2626',25,248,2), P('s3h','H','#ea580c',90,256,1), P('s3z','Z','#16a34a',275,248)],
+     routes:{s3h:R([[90,165],[100,175]]), s3x:R([[35,200],[110,185],[200,140]], true), s3z:R([[275,90],[220,60]], true)}},
+  ];
+  try {
+    for (const b of books) if (!S.books[b.id]) await Store.putBook(b);
+    for (const p of plays){ p.updated = Date.now(); await Store.putPlay(p); }
+    toast('Sample plays added'); renderLib();
+  } catch(e){ onWriteErr(e); if (btn) btn.disabled = false; }
 }
 
 /* ---------- designer ---------- */
@@ -783,7 +812,7 @@ document.addEventListener('keydown', e => {
 
 /* ---------- start ---------- */
 // Team password gate. Only a SHA-256 hash of the password is in this file.
-const PW_HASH = 'ea5e4d80c42a5d0c0797eec99a1cebc8771317d1e08907919995a71f2e4a0c43';
+const PW_HASH = '5e98188d97fc82190f92636e94098b71e960c37b96adc794d8b37db1ebaedc62';
 async function sha(t){ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2,'0')).join(''); }
 let started = false;
 function start(){ if (started) return; started = true; $('#gate').hidden = true; renderLib(); renderAuth(); initDb(); }
