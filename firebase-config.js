@@ -1,12 +1,11 @@
-// Paste your Firebase web app config here (Firebase console → Project settings → Your apps → Web app).
-// Until this is filled in, the playbook runs in "setup mode" and saves plays on each device only.
+// Firebase web app config for the ffdigitalplaysheet project.
 window.FIREBASE_CONFIG = {
-  apiKey: "PASTE_API_KEY",
-  authDomain: "PASTE_PROJECT_ID.firebaseapp.com",
-  projectId: "PASTE_PROJECT_ID",
-  storageBucket: "PASTE_PROJECT_ID.appspot.com",
-  messagingSenderId: "PASTE_SENDER_ID",
-  appId: "PASTE_APP_ID"
+  apiKey: "AIzaSyBhRwM7GziOIezz6ez1zSflDIBui6OXve4",
+  authDomain: "ffdigitalplaysheet.firebaseapp.com",
+  projectId: "ffdigitalplaysheet",
+  storageBucket: "ffdigitalplaysheet.firebasestorage.app",
+  messagingSenderId: "507225408976",
+  appId: "1:507225408976:web:bdac459b95834102eb25d5"
 };
 
 // Email address(es) of coaches allowed to edit plays. Must match firestore.rules.
