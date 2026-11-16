@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Anyone with the site can read the playbook; only the coach account(s) can change it.
+    function isCoach() {
+      return request.auth != null
+        && request.auth.token.email in ['howiepollard@gmail.com'];
+    }
+    match /plays/{id} {
+      allow read: if true;
+      allow write: if isCoach();
+    }
+    match /books/{id} {
+      allow read: if true;
+      allow write: if isCoach();
+    }
+  }
+}

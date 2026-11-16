@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Flag Football Playbook</title>
+<meta name="robots" content="noindex">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Playbook">
+<meta name="theme-color" content="#0f172a">
+<style>
+:root{
+  --bg:#0f172a; --panel:#111c33; --panel2:#18264a; --line:#26365f; --text:#e8eefc; --muted:#94a3c4;
+  --accent:#facc15; --accent2:#38bdf8; --danger:#ef4444; --ok:#22c55e; --r:12px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+button,select,input,textarea{font:inherit;color:inherit}
+button{touch-action:manipulation;cursor:pointer}
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(15,23,42,.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+header h1{font-size:17px;flex-shrink:0;margin:0;font-weight:800;letter-spacing:.2px;white-space:nowrap}
+header h1 span{color:var(--accent)}
+.tabs{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px;margin-left:auto}
+.tabs button{border:0;background:none;padding:6px 14px;border-radius:999px;color:var(--muted);font-weight:600}
+.tabs button.on{background:var(--accent);color:#1a1a1a}
+#status{font-size:12px;color:var(--muted);padding:4px 14px 0;min-height:18px}
+main{padding:10px 14px 40px;max-width:1300px;margin:0 auto}
+.btn{border:1px solid var(--line);background:var(--panel2);padding:9px 14px;border-radius:10px;font-weight:600;min-height:42px}
+.btn.primary{background:var(--accent);color:#1a1a1a;border-color:var(--accent)}
+.btn.danger{background:transparent;color:#fca5a5;border-color:#7f1d1d}
+.btn.sm{padding:6px 10px;min-height:34px;font-size:13px}
+.btn:disabled{opacity:.45}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.grow{flex:1}
+input[type=text],input[type=search],select,textarea{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 11px;min-height:42px;width:100%}
+textarea{min-height:80px;resize:vertical}
+label.lbl{display:block;font-size:12px;color:var(--muted);margin:12px 0 5px;text-transform:uppercase;letter-spacing:.6px;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--panel);padding:6px 11px;border-radius:999px;font-size:13px;font-weight:600;color:var(--muted)}
+.chip.on{background:var(--accent2);border-color:var(--accent2);color:#06213a}
+.chip.book.on{background:var(--accent);border-color:var(--accent);color:#1a1a1a}
+.cgroup{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.cgroup b{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;width:70px}
+/* library */
+.libtop{display:grid;gap:10px;margin-bottom:12px}
+.filters{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+.card .thumb{display:block;width:100%;border:0;padding:0;background:none}
+.card svg{display:block;width:100%;height:auto}
+.card .meta{padding:8px 10px 10px;display:flex;flex-direction:column;gap:6px;flex:1}
+.card .nm{font-weight:700;font-size:14px}
+.card .tg{display:flex;flex-wrap:wrap;gap:4px}
+.card .tg span{font-size:10.5px;background:var(--panel2);border:1px solid var(--line);padding:1px 6px;border-radius:6px;color:var(--muted)}
+.card .acts{display:flex;gap:6px;margin-top:auto}
+.card .acts .btn{flex:1}
+.empty{padding:40px 16px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:var(--r)}
+/* designer */
+.dwrap{display:grid;gap:14px}
+@media (min-width:900px){.dwrap{grid-template-columns:minmax(0,1fr) 360px;align-items:start}}
+.fieldbox{width:min(100%, calc(64vh * 300 / 340));margin:0 auto}
+#field{display:block;width:100%;aspect-ratio:300/340;border-radius:var(--r);touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.toolbar{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;justify-content:center}
+.seg{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:none;padding:8px 12px;min-height:42px;font-weight:700;color:var(--muted);font-size:14px}
+.seg button.on{background:var(--accent);color:#1a1a1a}
+.hint{text-align:center;font-size:12.5px;color:var(--muted);margin-top:8px;min-height:18px}
+.insp{margin-top:10px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:10px}
+.sw{width:30px;height:30px;border-radius:50%;border:2px solid transparent}
+.sw.on{border-color:#fff;box-shadow:0 0 0 2px var(--accent)}
+.side{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px 12px 14px}
+.side h2{font-size:15px;margin:0}
+.savest{font-size:12px;color:var(--muted)}
+/* overlays */
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(2,6,23,.75);display:flex;align-items:center;justify-content:center;padding:16px}
+.overlay[hidden]{display:none}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;width:min(460px,100%);max-height:88vh;overflow:auto}
+.box h3{margin:0 0 10px}
+.box p{margin:0 0 14px}
+#present{background:#050b18;flex-direction:column;padding:12px;gap:10px;justify-content:flex-start}
+#present .ptop{width:100%;max-width:900px;display:flex;align-items:flex-start;gap:10px}
+#present .pname{font-size:22px;font-weight:800}
+#present .pnotes{color:var(--muted);font-size:14px;white-space:pre-wrap}
+#present .pfield{flex:1;min-height:0;width:100%;display:flex;justify-content:center;align-items:center;touch-action:pan-y}
+#present .pfield svg{width:min(100%, calc((100vh - 220px) * 300 / 340));height:auto;border-radius:14px;display:block}
+#present .pbar{display:flex;gap:10px;justify-content:center;width:100%;max-width:600px}
+#present .pbar .btn{flex:1;min-height:52px;font-size:16px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#020617;border:1px solid var(--line);padding:10px 16px;border-radius:999px;z-index:60;font-size:14px;pointer-events:none;opacity:0;transition:opacity .2s}
+.toast.show{opacity:1}
+.hide{display:none!important}
+.bookrow{display:flex;gap:6px;margin-bottom:8px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏈 Play<span>Designer</span></h1>
+  <div class="tabs" id="tabs">
+    <button data-v="lib" class="on">Plays</button>
+    <button data-v="des" id="tabDes">Designer</button>
+  </div>
+  <button class="btn sm hide" id="authBtn">Coach sign-in</button>
+</header>
+<div id="status">Loading plays…</div>
+<main>
+  <section id="lib">
+    <div class="libtop">
+      <div class="row">
+        <input type="search" id="q" class="grow" placeholder="Search plays…" style="flex:1;min-width:160px">
+        <button class="btn primary edit-only" id="newPlay">+ New play</button>
+      </div>
+      <div class="row">
+        <select id="bookSel" style="flex:1;min-width:160px"></select>
+        <button class="btn edit-only" id="manageBooks">Playbooks</button>
+        <button class="btn" id="showAll">▶ Show</button>
+      </div>
+      <div class="filters" id="tagFilters"></div>
+    </div>
+    <div id="grid" class="grid"></div>
+  </section>
+
+  <section id="des" class="hide">
+    <div class="dwrap">
+      <div>
+        <div class="fieldbox"><svg id="field" viewBox="0 0 300 340" xmlns="http://www.w3.org/2000/svg"></svg></div>
+        <div class="toolbar">
+          <div class="seg" id="tools">
+            <button data-t="move" class="on">✋ Move</button>
+            <button data-t="route">↗ Route</button>
+            <button data-t="motion">⋯ Motion</button>
+            <button data-t="erase">⌫ Erase</button>
+          </div>
+        </div>
+        <div class="toolbar">
+          <button class="btn sm" id="undo">↶ Undo</button>
+          <button class="btn sm" id="addP">+ Player</button>
+          <button class="btn sm" id="defense">Defense</button>
+          <button class="btn sm" id="flip">⇆ Flip</button>
+          <button class="btn sm primary" id="run">▶ Run play</button>
+        </div>
+        <div class="hint" id="hint"></div>
+        <div id="insp"></div>
+      </div>
+      <div class="side" id="side"></div>
+    </div>
+  </section>
+</main>
+
+<div class="overlay" id="modal" hidden><div class="box"></div></div>
+<div class="overlay" id="present" hidden>
+  <div class="ptop">
+    <div class="grow"><div class="pname" id="pName"></div><div class="tg" id="pTags" style="margin:4px 0"></div><div class="pnotes" id="pNotes"></div></div>
+    <button class="btn" id="pClose">✕</button>
+  </div>
+  <div class="pfield" id="pField"></div>
+  <div class="pbar">
+    <button class="btn" id="pPrev">‹ Prev</button>
+    <button class="btn primary" id="pRun">▶ Run</button>
+    <button class="btn" id="pNext">Next ›</button>
+  </div>
+  <div class="savest" id="pCount"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<div class="overlay" id="gate" style="background:#0f172a">
+  <form class="box" id="gateForm" style="text-align:center">
+    <div style="font-size:44px">🏈</div>
+    <h3>Team Playbook</h3>
+    <p class="savest">Enter the team password to see the plays.</p>
+    <input type="text" id="gatePw" autocomplete="current-password" autocapitalize="off" style="-webkit-text-security:disc;text-align:center" placeholder="Password">
+    <div class="savest" id="gateErr" style="color:#fca5a5;margin-top:8px;min-height:18px"></div>
+    <button class="btn primary" style="width:100%;margin-top:6px">Open playbook</button>
+  </form>
+</div>
+<script src="firebase-config.js"></script>
+<script>
+(() => {
+const W = 300, H = 340, LOS = 240;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const clone = o => JSON.parse(JSON.stringify(o));
+const snap5 = v => Math.round(v / 5) * 5;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+const COLORS = {Q:'#2563eb', C:'#64748b', X:'#dc2626', Z:'#16a34a', H:'#ea580c', Y:'#eab308', R:'#9333ea'};
+const PALETTE = ['#2563eb','#dc2626','#16a34a','#ea580c','#eab308','#9333ea','#0891b2','#db2777','#64748b','#f8fafc'];
+const TAGS = [
+  {g:'Down', items:['1st','2nd','3rd','4th']},
+  {g:'Distance', items:['Short','Medium','Long']},
+  {g:'Situation', items:['Red Zone','Goal Line','No-Run Zone','Extra Point','2-Minute']},
+  {g:'Type', items:['Pass','Run','Trick','Screen']},
+];
+const Cn = ['C',150,248], Qn = ['Q',150,292];
+const FORMS = {
+  '5v5': {
+    'Spread':      [Cn, Qn, ['X',25,248], ['H',90,256], ['Z',275,248]],
+    'Trips Right': [Cn, Qn, ['H',195,256], ['Y',235,256], ['Z',275,248]],
+    'Trips Left':  [Cn, Qn, ['X',25,248], ['H',65,256], ['Y',105,256]],
+    'Bunch Left':  [Cn, Qn, ['X',75,248], ['H',55,264], ['Y',95,264]],
+    'Stack Right': [Cn, Qn, ['X',25,248], ['Z',235,248], ['H',235,272]],
+    'Offset RB':   [Cn, ['Q',150,282], ['R',185,298], ['X',25,248], ['Z',275,248]],
+  },
+  '7v7': {
+    'Spread':      [Cn, Qn, ['X',20,248], ['H',65,256], ['Y',235,256], ['Z',280,248], ['R',185,292]],
+    'Trips Right': [Cn, Qn, ['X',20,248], ['H',190,256], ['Y',230,256], ['Z',280,248], ['R',115,292]],
+    'Bunch Right': [Cn, Qn, ['X',20,248], ['H',65,256], ['Y',230,248], ['Z',210,264], ['R',250,264]],
+    'Empty':       [Cn, Qn, ['X',20,248], ['H',60,256], ['R',100,256], ['Y',240,256], ['Z',280,248]],
+  }
+};
+
+const S = {
+  plays:{}, books:{}, view:'lib', q:'', book:'all', tags:new Set(),
+  cur:null, tool:'move', sel:null, undo:[], canWrite:true, mode:'pending'
+};
+let fb = null;   // {db, auth, fs, au} when Firebase is configured
+const CFG = window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey && !/PASTE/.test(window.FIREBASE_CONFIG.apiKey) ? window.FIREBASE_CONFIG : null;
+const COACH = (window.COACH_EMAILS || []).map(e => String(e).toLowerCase());
+
+/* ---------- storage ---------- */
+const LKEY = 'flagplays.v1';
+function loadLocal(){ try{ const d = JSON.parse(localStorage.getItem(LKEY)||'{}'); S.plays = d.plays||{}; S.books = d.books||{}; }catch(e){} }
+function saveLocal(){ try{ localStorage.setItem(LKEY, JSON.stringify({plays:S.plays, books:S.books})); }catch(e){ toast('Could not save on this device'); } }
+// Firestore can't hold arrays inside arrays (route points), so each play is stored as a JSON string.
+const Store = {
+  async putPlay(p){ S.plays[p.id] = clone(p); if (fb) await fb.fs.setDoc(fb.fs.doc(fb.db, 'plays', p.id), {name:p.name||'', updated:Date.now(), json:JSON.stringify(p)}); else saveLocal(); },
+  async delPlay(id){ delete S.plays[id]; if (fb) await fb.fs.deleteDoc(fb.fs.doc(fb.db, 'plays', id)); else saveLocal(); },
+  async putBook(b){ S.books[b.id] = clone(b); if (fb) await fb.fs.setDoc(fb.fs.doc(fb.db, 'books', b.id), {name:b.name||''}); else saveLocal(); },
+  async delBook(id){ delete S.books[id]; if (fb) await fb.fs.deleteDoc(fb.fs.doc(fb.db, 'books', id)); else saveLocal(); },
+};
+function onWriteErr(e){
+  const code = e && e.code;
+  if (code === 'permission-denied'){ toast('Only a signed-in coach can save changes.'); }
+  else if (code === 'resource-exhausted') toast('Storage is full — delete a few plays first.');
+  else toast('Could not save — check your connection.');
+}
+function setStatus(t){ $('#status').textContent = t; }
+
+async function initDb(){
+  if (!CFG){ goLocal(); return; }
+  const V = '10.12.2';
+  try {
+    const [app, fs, au] = await Promise.all([
+      import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`),
+      import(`https://www.gstatic.com/firebasejs/${V}/firebase-firestore.js`),
+      import(`https://www.gstatic.com/firebasejs/${V}/firebase-auth.js`),
+    ]);
+    const fa = app.initializeApp(CFG);
+    fb = {fs, au, db: fs.getFirestore(fa), auth: au.getAuth(fa)};
+  } catch(e){ fb = null; setStatus('Could not load the shared playbook — check your connection.'); S.mode = 'local'; S.canWrite = false; applyPerms(); renderLib(); return; }
+  S.mode = 'db'; S.canWrite = false; applyPerms();
+  fb.au.onAuthStateChanged(fb.auth, u => {
+    const email = (u && u.email || '').toLowerCase();
+    S.coach = u ? email : null;
+    S.canWrite = !!u && (!COACH.length || COACH.includes(email));
+    applyPerms(); renderAuth();
+    setStatus(S.canWrite ? `Coach mode — signed in as ${email}. Changes save for everyone.` : 'View only. Coaches: tap “Coach sign-in” to edit.');
+    if (S.view === 'lib') renderLib();
+  });
+  const timer = setTimeout(() => { if (S.mode === 'db' && !Object.keys(S.plays).length) setStatus('Still loading the playbook…'); }, 10000);
+  fb.fs.onSnapshot(fb.fs.collection(fb.db, 'plays'), snap => {
+    clearTimeout(timer);
+    const o = {}; snap.docs.forEach(d => { try { o[d.id] = Object.assign(JSON.parse(d.data().json), {id:d.id}); } catch(e){} });
+    S.plays = o; if (S.view === 'lib') renderLib();
+  }, err => { clearTimeout(timer); setStatus('The playbook is unavailable right now.'); });
+  fb.fs.onSnapshot(fb.fs.collection(fb.db, 'books'), snap => {
+    const o = {}; snap.docs.forEach(d => { o[d.id] = {id:d.id, name:d.data().name}; });
+    S.books = o; if (S.view === 'lib') renderLib(); else renderSide();
+  }, err => {});
+}
+function goLocal(){ S.mode = 'local'; loadLocal(); setStatus('Setup mode: plays are saved on this device only until Firebase is connected.'); applyPerms(); renderLib(); }
+
+/* ---------- coach sign-in ---------- */
+function renderAuth(){
+  const b = $('#authBtn'); if (!b) return;
+  b.classList.toggle('hide', !fb);
+  b.textContent = S.coach ? 'Sign out' : 'Coach sign-in';
+}
+$('#authBtn').onclick = async () => {
+  if (!fb) return;
+  if (S.coach){ if (await ask('Sign out of coach mode?', 'Sign out')){ await flush(); await fb.au.signOut(fb.auth); show('lib'); } return; }
+  modal(`<h3>Coach sign-in</h3>
+    <label class="lbl" style="margin-top:0">Email</label><input type="text" id="ce" autocomplete="username" inputmode="email" autocapitalize="off">
+    <label class="lbl">Password</label><input type="text" id="cp" autocomplete="current-password" style="-webkit-text-security:disc">
+    <div class="savest" id="cerr" style="color:#fca5a5;margin-top:8px"></div>
+    <div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn" id="cx">Cancel</button><button class="btn primary" id="cgo">Sign in</button></div>`,
+    box => {
+      box.querySelector('#cx').onclick = closeModal;
+      const go = async () => {
+        const e = box.querySelector('#ce').value.trim(), p = box.querySelector('#cp').value;
+        box.querySelector('#cerr').textContent = '';
+        try { await fb.au.signInWithEmailAndPassword(fb.auth, e, p); closeModal(); toast('Coach mode on'); }
+        catch(err){ box.querySelector('#cerr').textContent = 'That email and password didn’t work.'; }
+      };
+      box.querySelector('#cgo').onclick = go;
+      box.querySelector('#cp').onkeydown = ev => { if (ev.key === 'Enter') go(); };
+    });
+};
+
+/* ---------- geometry ---------- */
+function sample(pts, curve){
+  if (!curve || pts.length < 3) return pts;
+  const out = [];
+  for (let i = 0; i < pts.length - 1; i++){
+    const p0 = pts[i-1]||pts[i], p1 = pts[i], p2 = pts[i+1], p3 = pts[i+2]||pts[i+1];
+    for (let s = 0; s < 10; s++){
+      const t = s/10, t2 = t*t, t3 = t2*t;
+      out.push([0,1].map(k => 0.5*((2*p1[k]) + (-p0[k]+p2[k])*t + (2*p0[k]-5*p1[k]+4*p2[k]-p3[k])*t2 + (-p0[k]+3*p1[k]-3*p2[k]+p3[k])*t3)));
+    }
+  }
+  out.push(pts[pts.length-1]);
+  return out;
+}
+function plen(pts){ let L = 0; for (let i = 1; i < pts.length; i++) L += Math.hypot(pts[i][0]-pts[i-1][0], pts[i][1]-pts[i-1][1]); return L; }
+function along(pts, d){
+  for (let i = 1; i < pts.length; i++){
+    const a = pts[i-1], b = pts[i], l = Math.hypot(b[0]-a[0], b[1]-a[1]);
+    if (d <= l){ const t = l ? d/l : 0; return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t]; }
+    d -= l;
+  }
+  return pts[pts.length-1];
+}
+function paths(p, pl){
+  const r = (p.routes||{})[pl.id]; if (!r) return {};
+  const start = [pl.x, pl.y];
+  const m = r.motion && r.motion.length ? sample([start, ...r.motion], r.curve) : null;
+  const mEnd = m ? m[m.length-1] : start;
+  const rt = r.route && r.route.length ? sample([mEnd, ...r.route], r.curve) : null;
+  return {m, rt};
+}
+const dstr = pts => 'M' + pts.map(q => q[0].toFixed(1)+' '+q[1].toFixed(1)).join('L');
+function arrow(pts, col){
+  const b = pts[pts.length-1]; let a = pts[pts.length-2];
+  for (let i = pts.length-2; i >= 0 && Math.hypot(b[0]-pts[i][0], b[1]-pts[i][1]) < 4; i--) a = pts[i-1] || pts[0];
+  const ang = Math.atan2(b[1]-a[1], b[0]-a[0]), L = 11, w = 6;
+  const bx = b[0]-Math.cos(ang)*L, by = b[1]-Math.sin(ang)*L;
+  const p1 = [bx+Math.sin(ang)*w, by-Math.cos(ang)*w], p2 = [bx-Math.sin(ang)*w, by+Math.cos(ang)*w];
+  return `<polygon points="${b.join(',')} ${p1.join(',')} ${p2.join(',')}" fill="${col}" stroke="rgba(255,255,255,.9)" stroke-width="1.2" stroke-linejoin="round"/>`;
+}
+
+/* ---------- field render ---------- */
+function fieldSVG(p, o = {}){
+  let s = `<rect width="${W}" height="${H}" fill="#2f7a3b"/>`;
+  for (let k = -2; k <= 5; k++){ if (k % 2 === 0){ const y = LOS-50*k-50; s += `<rect x="0" y="${y}" width="${W}" height="50" fill="rgba(255,255,255,.035)"/>`; } }
+  if (p.goal){
+    const gy = LOS - p.goal*10, top = Math.max(0, gy-100);
+    if (gy > 0){
+      s += `<rect x="0" y="${top}" width="${W}" height="${gy-top}" fill="#1f5b2a"/>`;
+      s += `<text x="150" y="${(top+gy)/2+7}" text-anchor="middle" font-size="20" font-weight="800" fill="rgba(255,255,255,.22)" letter-spacing="6">END ZONE</text>`;
+      s += `<line x1="0" x2="${W}" y1="${gy}" y2="${gy}" stroke="#fff" stroke-width="3"/>`;
+    }
+  }
+  for (let k = -2; k <= 6; k++){
+    if (k === 0) continue; const y = LOS-50*k; if (y <= 0 || y >= H) continue;
+    if (p.goal && Math.abs(y - (LOS-p.goal*10)) < 1) continue;
+    s += `<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="rgba(255,255,255,.35)" stroke-width="1"/>`;
+    if (!o.thumb) s += `<text x="5" y="${y-3}" font-size="9" fill="rgba(255,255,255,.55)">${k>0?'+':''}${k*5}</text>`;
+  }
+  s += `<line x1="0" x2="${W}" y1="${LOS}" y2="${LOS}" stroke="#7dd3fc" stroke-width="2.2"/>`;
+  if (!o.thumb) s += `<text x="${W-5}" y="${LOS-4}" font-size="9" text-anchor="end" fill="#bae6fd">LOS</text>`;
+  if (p.goal && !o.thumb) s += `<text x="${W-5}" y="${H-6}" font-size="10" text-anchor="end" fill="rgba(255,255,255,.7)">${p.goal} yds to goal</text>`;
+
+  const pos = o.pos || {};
+  const drawPl = pl => {
+    let s = '';
+    const [x, y] = pos[pl.id] || [pl.x, pl.y];
+    if (o.sel === pl.id) s += `<circle cx="${x}" cy="${y}" r="18" fill="none" stroke="#facc15" stroke-width="3"/>`;
+    if (pl.d){
+      s += `<g stroke-linecap="round"><path d="M${x-8} ${y-8}L${x+8} ${y+8}M${x+8} ${y-8}L${x-8} ${y+8}" stroke="#fff" stroke-width="7"/><path d="M${x-8} ${y-8}L${x+8} ${y+8}M${x+8} ${y-8}L${x-8} ${y+8}" stroke="${pl.color}" stroke-width="4"/></g>`;
+    } else {
+      const light = /^#f[0-9a-f]/i.test(pl.color) || pl.color === '#eab308';
+      s += `<circle cx="${x}" cy="${y}" r="12" fill="${pl.color}" stroke="#fff" stroke-width="2"/>`;
+      s += `<text x="${x}" y="${y+4.5}" text-anchor="middle" font-size="12.5" font-weight="800" fill="${light?'#111':'#fff'}">${esc(pl.label)}</text>`;
+    }
+    if (pl.read){
+      s += `<circle cx="${x+11}" cy="${y-11}" r="7" fill="#facc15" stroke="#111" stroke-width="1"/><text x="${x+11}" y="${y-7.5}" text-anchor="middle" font-size="9.5" font-weight="800" fill="#111">${pl.read}</text>`;
+    }
+    return s;
+  };
+  (p.players||[]).filter(pl => pl.d).forEach(pl => { s += `<g opacity="${o.pos ? 1 : .85}">${drawPl(pl)}</g>`; });
+  const fade = o.fade ? .35 : 1;
+  (p.players||[]).forEach(pl => {
+    const {m, rt} = paths(p, pl); const col = pl.color;
+    s += `<g opacity="${fade}">`;
+    if (m){
+      s += `<path d="${dstr(m)}" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="5" stroke-dasharray="7 6" stroke-linecap="round" stroke-linejoin="round"/>`;
+      s += `<path d="${dstr(m)}" fill="none" stroke="${col}" stroke-width="3" stroke-dasharray="7 6" stroke-linecap="round" stroke-linejoin="round"/>`;
+      if (!rt){ const e = m[m.length-1]; s += `<circle cx="${e[0]}" cy="${e[1]}" r="4" fill="${col}" stroke="#fff"/>`; }
+    }
+    if (rt){
+      s += `<path d="${dstr(rt)}" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`;
+      s += `<path d="${dstr(rt)}" fill="none" stroke="${col}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+      s += arrow(rt, col);
+    }
+    s += `</g>`;
+  });
+  (p.players||[]).filter(pl => !pl.d).forEach(pl => { s += drawPl(pl); });
+  return s;
+}
+const svgWrap = (inner, extra='') => `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" ${extra}>${inner}</svg>`;
+
+/* ---------- animation ---------- */
+let anim = null;
+function stopAnim(){ if (anim){ cancelAnimationFrame(anim.raf); const cb = anim.done; anim = null; cb && cb(); } }
+function runAnim(p, draw, done){
+  stopAnim();
+  const SP = 75;
+  const info = (p.players||[]).map(pl => ({pl, ...paths(p, pl)}));
+  const mDur = Math.max(0, ...info.map(i => i.m ? plen(i.m)/SP : 0));
+  const pause = mDur ? 0.35 : 0.15;
+  const rDur = Math.max(0, ...info.map(i => i.rt ? plen(i.rt)/SP : 0));
+  const total = mDur + pause + rDur + 0.8;
+  const t0 = performance.now();
+  anim = {done};
+  const step = now => {
+    if (!anim) return;
+    const t = (now - t0)/1000; const pos = {};
+    info.forEach(({pl, m, rt}) => {
+      let q = [pl.x, pl.y];
+      if (m) q = along(m, Math.min(t, mDur)*SP);
+      const rtT = t - mDur - pause;
+      if (rt && rtT > 0) q = along(rt, rtT*SP);
+      pos[pl.id] = q;
+    });
+    draw(pos);
+    if (t < total) anim.raf = requestAnimationFrame(step); else stopAnim();
+  };
+  anim.raf = requestAnimationFrame(step);
+}
+
+/* ---------- ui helpers ---------- */
+let toastT;
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2200); }
+function modal(html, mount){ const m = $('#modal'), b = m.querySelector('.box'); b.innerHTML = html; m.hidden = false; mount && mount(b); }
+function closeModal(){ $('#modal').hidden = true; }
+$('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+function ask(msg, ok = 'OK', danger = false){
+  return new Promise(res => modal(`<p>${msg}</p><div class="row" style="justify-content:flex-end"><button class="btn" data-x="0">Cancel</button><button class="btn ${danger?'danger':'primary'}" data-x="1">${ok}</button></div>`,
+    b => b.querySelectorAll('[data-x]').forEach(x => x.onclick = () => { closeModal(); res(x.dataset.x === '1'); })));
+}
+function askText(title, val = '', ok = 'Save'){
+  return new Promise(res => modal(`<h3>${esc(title)}</h3><input type="text" id="mt" value="${esc(val)}" maxlength="60"><div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn" data-x="0">Cancel</button><button class="btn primary" data-x="1">${ok}</button></div>`,
+    b => { const i = b.querySelector('#mt'); setTimeout(() => i.focus(), 50);
+      const fin = v => { closeModal(); res(v); };
+      i.onkeydown = e => { if (e.key === 'Enter') fin(i.value.trim()); };
+      b.querySelectorAll('[data-x]').forEach(x => x.onclick = () => fin(x.dataset.x === '1' ? i.value.trim() : null)); }));
+}
+function applyPerms(){
+  document.querySelectorAll('.edit-only').forEach(el => el.classList.toggle('hide', !S.canWrite));
+  $('#tabDes').classList.toggle('hide', !S.canWrite);
+  if (!S.canWrite && S.view === 'des') show('lib');
+}
+
+/* ---------- views ---------- */
+function show(v){
+  if (S.view === 'des' && v !== 'des'){ stopAnim(); flush(); }
+  S.view = v;
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  $('#lib').classList.toggle('hide', v !== 'lib');
+  $('#des').classList.toggle('hide', v !== 'des');
+  if (v === 'lib') renderLib();
+  if (v === 'des'){
+    if (!S.cur){ const first = filtered()[0]; if (first) openPlay(first.id); else { newPlayDialog(); show('lib'); return; } }
+    renderDes();
+  }
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => show(b.dataset.v));
+
+/* ---------- library ---------- */
+function bookList(){ return Object.values(S.books).sort((a,b) => (a.name||'').localeCompare(b.name||'')); }
+function filtered(){
+  const q = S.q.toLowerCase();
+  return Object.values(S.plays).filter(p => {
+    if (S.book !== 'all' && !(p.books||[]).includes(S.book)) return false;
+    for (const t of S.tags) if (!(p.tags||[]).includes(t)) return false;
+    if (q && !((p.name||'') + ' ' + (p.notes||'') + ' ' + (p.formation||'')).toLowerCase().includes(q)) return false;
+    return true;
+  }).sort((a,b) => (a.name||'').localeCompare(b.name||'', undefined, {numeric:true}));
+}
+function renderLib(){
+  if (S.book !== 'all' && !S.books[S.book]) S.book = 'all';
+  const bs = bookList();
+  $('#bookSel').innerHTML = `<option value="all">All plays (${Object.keys(S.plays).length})</option>` +
+    bs.map(b => `<option value="${esc(b.id)}" ${S.book===b.id?'selected':''}>📒 ${esc(b.name)} (${Object.values(S.plays).filter(p => (p.books||[]).includes(b.id)).length})</option>`).join('');
+  $('#tagFilters').innerHTML = TAGS.map(g => `<div class="cgroup"><b>${g.g}</b>${g.items.map(t => `<button class="chip ${S.tags.has(t)?'on':''}" data-tag="${esc(t)}">${esc(t)}</button>`).join('')}</div>`).join('') +
+    (S.tags.size ? `<button class="btn sm" id="clearTags" style="margin-top:4px">Clear filters</button>` : '');
+  $('#tagFilters').querySelectorAll('[data-tag]').forEach(c => c.onclick = () => { const t = c.dataset.tag; S.tags.has(t) ? S.tags.delete(t) : S.tags.add(t); renderLib(); });
+  const ct = $('#clearTags'); if (ct) ct.onclick = () => { S.tags.clear(); renderLib(); };
+  const list = filtered();
+  const g = $('#grid');
+  if (S.mode === 'pending'){ g.innerHTML = `<div class="empty" style="grid-column:1/-1">Loading your plays…</div>`; return; }
+  if (!list.length){
+    g.innerHTML = `<div class="empty" style="grid-column:1/-1">${Object.keys(S.plays).length ? 'No plays match these filters.' : (S.canWrite ? 'No plays yet. Tap <b>+ New play</b> to draw your first one.' : 'No plays have been added yet.')}</div>`;
+    return;
+  }
+  g.innerHTML = list.map(p => `<div class="card">
+      <button class="thumb" data-open="${esc(p.id)}">${svgWrap(fieldSVG(p, {thumb:true}))}</button>
+      <div class="meta"><div class="nm">${esc(p.name||'Untitled')}</div>
+        <div class="tg">${(p.tags||[]).map(t => `<span>${esc(t)}</span>`).join('')}</div>
+        <div class="acts">${S.canWrite ? `<button class="btn sm" data-open="${esc(p.id)}">Edit</button>` : ''}<button class="btn sm" data-show="${esc(p.id)}">▶ Show</button></div>
+      </div></div>`).join('');
+  g.querySelectorAll('[data-open]').forEach(b => b.onclick = () => S.canWrite ? (openPlay(b.dataset.open), show('des')) : present(b.dataset.open));
+  g.querySelectorAll('[data-show]').forEach(b => b.onclick = () => present(b.dataset.show));
+}
+$('#q').oninput = e => { S.q = e.target.value; renderLib(); };
+$('#bookSel').onchange = e => { S.book = e.target.value; renderLib(); };
+$('#showAll').onclick = () => { const l = filtered(); if (l.length) present(l[0].id); else toast('No plays to show'); };
+$('#newPlay').onclick = () => newPlayDialog();
+$('#manageBooks').onclick = () => booksDialog();
+
+function makePlayers(fmt, form){
+  return FORMS[fmt][form].map(([l, x, y]) => ({id:uid('p'), label:l, color:COLORS[l]||'#64748b', x, y, read:0, d:false}));
+}
+function newPlayDialog(){
+  let fmt = localStorage.getItem('flagfmt') || '5v5';
+  try { fmt = localStorage.getItem('flagfmt') || '5v5'; } catch(e){}
+  const draw = b => {
+    b.innerHTML = `<h3>New play</h3>
+      <label class="lbl" style="margin-top:0">Players</label>
+      <div class="seg" style="display:inline-flex">${['5v5','7v7'].map(f => `<button data-f="${f}" class="${f===fmt?'on':''}">${f}</button>`).join('')}</div>
+      <label class="lbl">Start from a formation</label>
+      <div class="chips">${Object.keys(FORMS[fmt]).map(n => `<button class="btn" data-form="${esc(n)}">${esc(n)}</button>`).join('')}</div>
+      <div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn" data-x>Cancel</button></div>`;
+    b.querySelectorAll('[data-f]').forEach(x => x.onclick = () => { fmt = x.dataset.f; try{ localStorage.setItem('flagfmt', fmt); }catch(e){} draw(b); });
+    b.querySelector('[data-x]').onclick = closeModal;
+    b.querySelectorAll('[data-form]').forEach(x => x.onclick = () => {
+      const form = x.dataset.form;
+      const p = {id:uid('play'), name:form + ' – New', fmt, formation:form, players:makePlayers(fmt, form), routes:{}, tags:[], books: S.book !== 'all' ? [S.book] : [], notes:'', goal:0, updated:Date.now()};
+      closeModal(); S.cur = p; S.undo = []; S.sel = null; S.tool = 'route';
+      Store.putPlay(p).catch(onWriteErr);
+      show('des');
+    });
+  };
+  modal('', draw);
+}
+function booksDialog(){
+  const draw = b => {
+    const bs = bookList();
+    b.innerHTML = `<h3>Playbooks</h3>
+      ${bs.length ? '' : '<p class="savest">Group plays into playbooks — e.g. “Chargers”, “Cardinals”, “Game day”.</p>'}
+      ${bs.map(x => `<div class="bookrow"><input type="text" value="${esc(x.name)}" data-rn="${esc(x.id)}"><button class="btn danger sm" data-del="${esc(x.id)}">Delete</button></div>`).join('')}
+      <div class="row" style="margin-top:10px"><button class="btn primary" id="addBook">+ New playbook</button><span class="grow"></span><button class="btn" id="doneBooks">Done</button></div>`;
+    b.querySelectorAll('[data-rn]').forEach(i => i.onchange = () => { const bk = S.books[i.dataset.rn]; const v = i.value.trim(); if (bk && v && v !== bk.name){ bk.name = v; Store.putBook(bk).catch(onWriteErr); } });
+    b.querySelectorAll('[data-del]').forEach(x => x.onclick = async () => {
+      const bk = S.books[x.dataset.del]; closeModal();
+      if (await ask(`Delete the playbook “${esc(bk.name)}”? The plays in it are kept.`, 'Delete', true)){ await Store.delBook(bk.id).catch(onWriteErr); }
+      booksDialog();
+    });
+    b.querySelector('#addBook').onclick = async () => { closeModal(); const n = await askText('New playbook name', '', 'Create'); if (n){ await Store.putBook({id:uid('book'), name:n}).catch(onWriteErr); } booksDialog(); };
+    b.querySelector('#doneBooks').onclick = () => { closeModal(); renderLib(); };
+  };
+  modal('', draw);
+}
+
+/* ---------- designer ---------- */
+const F = $('#field');
+function openPlay(id){ S.cur = clone(S.plays[id]); S.cur.routes = S.cur.routes || {}; S.cur.players = S.cur.players || []; S.undo = []; S.sel = null; S.tool = 'move'; }
+function selPl(){ return S.cur && S.cur.players.find(p => p.id === S.sel); }
+function drawField(pos){ F.innerHTML = fieldSVG(S.cur, {sel: pos ? null : S.sel, pos, fade: !!pos}); }
+function renderDes(){ drawField(); renderTools(); renderInsp(); renderSide(); }
+function renderTools(){
+  document.querySelectorAll('#tools button').forEach(b => b.classList.toggle('on', b.dataset.t === S.tool));
+  const pl = selPl();
+  const hints = {
+    move: 'Drag players to set the formation. Tap a player to edit label, color or read order.',
+    route: pl ? `Tap the field to add route points for ${pl.label || 'player'}. Tap another player to switch.` : 'Tap a player, then tap the field to draw their route.',
+    motion: pl ? `Tap where ${pl.label || 'the player'} motions to before the snap (dashed line).` : 'Tap a player, then tap the field to draw pre-snap motion.',
+    erase: 'Tap a player to erase their route and motion.'
+  };
+  $('#hint').textContent = hints[S.tool];
+  $('#undo').disabled = !S.undo.length;
+  $('#defense').textContent = S.cur.players.some(p => p.d) ? 'Hide defense' : '+ Defense';
+}
+document.querySelectorAll('#tools button').forEach(b => b.onclick = () => { stopAnim(); S.tool = b.dataset.t; if (S.tool === 'erase') S.sel = null; renderDes(); });
+
+function renderInsp(){
+  const pl = selPl(), box = $('#insp');
+  if (!pl){ box.innerHTML = ''; return; }
+  const r = S.cur.routes[pl.id] || {};
+  box.innerHTML = `<div class="insp">
+    <div class="row">
+      <input type="text" id="iLbl" value="${esc(pl.label)}" maxlength="2" style="width:64px;text-align:center;font-weight:800" ${pl.d?'disabled':''}>
+      <div class="row" style="gap:6px">${PALETTE.map(c => `<button class="sw ${pl.color===c?'on':''}" data-c="${c}" style="background:${c}" aria-label="color"></button>`).join('')}</div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <span class="savest">Read #</span>
+      <div class="seg">${[0,1,2,3,4].map(n => `<button data-rd="${n}" class="${(pl.read||0)===n?'on':''}">${n||'–'}</button>`).join('')}</div>
+      <button class="btn sm ${r.curve?'primary':''}" id="iCurve">〰 Curve</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn sm" id="iPt">↶ Last point</button>
+      <button class="btn sm" id="iClr">Clear route</button>
+      <span class="grow"></span>
+      <button class="btn sm danger" id="iDel">Remove player</button>
+    </div></div>`;
+  box.querySelector('#iLbl').oninput = e => { pl.label = e.target.value.toUpperCase(); drawField(); dirty(); };
+  box.querySelector('#iLbl').onfocus = () => pushUndo();
+  box.querySelectorAll('[data-c]').forEach(b => b.onclick = () => { pushUndo(); pl.color = b.dataset.c; dirty(); renderDes(); });
+  box.querySelectorAll('[data-rd]').forEach(b => b.onclick = () => { pushUndo(); const n = +b.dataset.rd;
+    if (n) S.cur.players.forEach(o => { if (o.read === n && o !== pl) o.read = 0; });
+    pl.read = n; dirty(); renderDes(); });
+  box.querySelector('#iCurve').onclick = () => { pushUndo(); const rr = getR(pl.id); rr.curve = !rr.curve; dirty(); renderDes(); };
+  box.querySelector('#iPt').onclick = () => {
+    const rr = S.cur.routes[pl.id]; if (!rr) return;
+    const k = S.tool === 'motion' ? 'motion' : (rr.route && rr.route.length ? 'route' : 'motion');
+    if (rr[k] && rr[k].length){ pushUndo(); rr[k].pop(); dirty(); renderDes(); }
+  };
+  box.querySelector('#iClr').onclick = () => { pushUndo(); delete S.cur.routes[pl.id]; dirty(); renderDes(); };
+  box.querySelector('#iDel').onclick = () => { pushUndo(); S.cur.players = S.cur.players.filter(o => o !== pl); delete S.cur.routes[pl.id]; S.sel = null; dirty(); renderDes(); };
+}
+
+function renderSide(){
+  if (S.view !== 'des' || !S.cur) return;
+  const p = S.cur, side = $('#side');
+  const forms = Object.entries(FORMS).map(([f, fs]) => `<optgroup label="${f}">${Object.keys(fs).map(n => `<option value="${f}|${esc(n)}">${f} · ${esc(n)}</option>`).join('')}</optgroup>`).join('');
+  side.innerHTML = `
+    <div class="row"><h2 class="grow">Play details</h2><span class="savest" id="saveSt">${saveText}</span></div>
+    <label class="lbl">Name</label>
+    <input type="text" id="sName" value="${esc(p.name)}" maxlength="60">
+    <label class="lbl">Playbooks</label>
+    <div class="chips">${bookList().map(b => `<button class="chip book ${(p.books||[]).includes(b.id)?'on':''}" data-bk="${esc(b.id)}">📒 ${esc(b.name)}</button>`).join('') || ''}<button class="chip" id="sNewBook">+ New playbook</button></div>
+    <label class="lbl">Tags</label>
+    ${TAGS.map(g => `<div class="cgroup"><b>${g.g}</b>${g.items.map(t => `<button class="chip ${(p.tags||[]).includes(t)?'on':''}" data-tg="${esc(t)}">${esc(t)}</button>`).join('')}</div>`).join('')}
+    <label class="lbl">Field position</label>
+    <select id="sGoal">${[[0,'Open field'],[5,'5 yds to goal'],[10,'10 yds to goal'],[15,'15 yds to goal'],[20,'20 yds to goal']].map(([v,t]) => `<option value="${v}" ${(+p.goal||0)===v?'selected':''}>${t}</option>`).join('')}</select>
+    <label class="lbl">Formation</label>
+    <select id="sForm"><option value="">Reset to a formation…</option>${forms}</select>
+    <label class="lbl">Coaching notes</label>
+    <textarea id="sNotes" placeholder="QB reads, cadence, what to tell the girls…">${esc(p.notes)}</textarea>
+    <div class="row" style="margin-top:14px">
+      <button class="btn sm" id="sShow">▶ Show</button>
+      <button class="btn sm" id="sDup">Duplicate</button>
+      <span class="grow"></span>
+      <button class="btn sm danger" id="sDel">Delete play</button>
+    </div>`;
+  side.querySelector('#sName').oninput = e => { p.name = e.target.value; dirty(); };
+  side.querySelector('#sNotes').oninput = e => { p.notes = e.target.value; dirty(); };
+  side.querySelector('#sGoal').onchange = e => { p.goal = +e.target.value; if (p.goal && !(p.tags||[]).includes('Red Zone') && p.goal <= 20){ p.tags = [...(p.tags||[]), 'Red Zone']; renderSide(); } drawField(); dirty(); };
+  side.querySelectorAll('[data-tg]').forEach(c => c.onclick = () => { const t = c.dataset.tg; p.tags = p.tags||[]; p.tags = p.tags.includes(t) ? p.tags.filter(x => x !== t) : [...p.tags, t]; c.classList.toggle('on'); dirty(); });
+  side.querySelectorAll('[data-bk]').forEach(c => c.onclick = () => { const id = c.dataset.bk; p.books = p.books||[]; p.books = p.books.includes(id) ? p.books.filter(x => x !== id) : [...p.books, id]; c.classList.toggle('on'); dirty(); });
+  side.querySelector('#sNewBook').onclick = async () => { const n = await askText('New playbook name', '', 'Create'); if (n){ const b = {id:uid('book'), name:n}; await Store.putBook(b).catch(onWriteErr); p.books = [...(p.books||[]), b.id]; dirty(); renderSide(); } };
+  side.querySelector('#sForm').onchange = async e => {
+    const v = e.target.value; e.target.value = ''; if (!v) return;
+    const [fmt, form] = v.split('|');
+    if (await ask(`Replace all players and routes with <b>${esc(fmt)} ${esc(form)}</b>?`, 'Replace', true)){
+      pushUndo(); p.fmt = fmt; p.formation = form; p.players = makePlayers(fmt, form); p.routes = {}; S.sel = null; dirty(); renderDes();
+    }
+  };
+  side.querySelector('#sShow').onclick = () => { flush(); present(p.id, [p]); };
+  side.querySelector('#sDup').onclick = async () => { await flush(); const c = clone(p); c.id = uid('play'); c.name = (p.name||'Play') + ' (copy)'; await Store.putPlay(c).catch(onWriteErr); openPlay(c.id); renderDes(); toast('Duplicated'); };
+  side.querySelector('#sDel').onclick = async () => {
+    if (!(await ask(`Delete “${esc(p.name)}”? This can’t be undone.`, 'Delete', true))) return;
+    clearTimeout(saveT); const id = p.id; S.cur = null; await Store.delPlay(id).catch(onWriteErr); show('lib');
+  };
+}
+
+/* undo + autosave */
+function pushUndo(){ S.undo.push(clone({players:S.cur.players, routes:S.cur.routes})); if (S.undo.length > 60) S.undo.shift(); }
+$('#undo').onclick = () => { stopAnim(); const u = S.undo.pop(); if (!u) return; S.cur.players = u.players; S.cur.routes = u.routes; if (!selPl()) S.sel = null; dirty(); renderDes(); };
+let saveT = null, saving = null, again = false, saveText = '';
+function setSave(t){ saveText = t; const el = $('#saveSt'); if (el) el.textContent = t; }
+function dirty(){ if (!S.cur) return; S.cur.updated = Date.now(); setSave('Unsaved…'); clearTimeout(saveT); saveT = setTimeout(flush, 1000); }
+async function flush(){
+  clearTimeout(saveT); if (!S.cur || saveText !== 'Unsaved…' && !again) return saving;
+  if (saving){ again = true; return saving; }
+  saving = (async () => {
+    setSave('Saving…');
+    try { await Store.putPlay(S.cur); setSave('Saved ✓'); } catch(e){ setSave('Not saved'); onWriteErr(e); }
+  })();
+  await saving; saving = null;
+  if (again){ again = false; setSave('Unsaved…'); return flush(); }
+}
+
+function getR(id){ return S.cur.routes[id] || (S.cur.routes[id] = {route:[], motion:[], curve:false}); }
+function svgPt(e){ const pt = F.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; const q = pt.matrixTransform(F.getScreenCTM().inverse()); return [q.x, q.y]; }
+function hit(pt){ const ps = S.cur.players; for (let i = ps.length-1; i >= 0; i--){ if (Math.hypot(ps[i].x-pt[0], ps[i].y-pt[1]) < 17) return ps[i]; } return null; }
+let drag = null;
+F.addEventListener('pointerdown', e => {
+  if (!S.cur || !S.canWrite) return;
+  if (anim){ stopAnim(); return; }
+  e.preventDefault();
+  const pt = svgPt(e), pl = hit(pt);
+  if (S.tool === 'move'){
+    if (pl){ drag = {pl, sx:pt[0], sy:pt[1], ox:pl.x, oy:pl.y, moved:false, snap:clone({players:S.cur.players, routes:S.cur.routes})}; F.setPointerCapture(e.pointerId); }
+    else { S.sel = null; renderDes(); }
+  } else if (S.tool === 'route' || S.tool === 'motion'){
+    if (pl && pl.id !== S.sel){ S.sel = pl.id; renderDes(); return; }
+    if (!S.sel){ toast('Tap a player first'); return; }
+    pushUndo();
+    const r = getR(S.sel);
+    r[S.tool].push([clamp(snap5(pt[0]), 3, W-3), clamp(snap5(pt[1]), 3, H-3)]);
+    dirty(); drawField(); renderInsp(); $('#undo').disabled = false;
+  } else if (S.tool === 'erase'){
+    if (pl && S.cur.routes[pl.id]){ pushUndo(); delete S.cur.routes[pl.id]; dirty(); renderDes(); }
+  }
+});
+F.addEventListener('pointermove', e => {
+  if (!drag) return;
+  const pt = svgPt(e), dx = pt[0]-drag.sx, dy = pt[1]-drag.sy;
+  if (!drag.moved && Math.hypot(dx, dy) < 5) return;
+  if (!drag.moved){ drag.moved = true; S.undo.push(drag.snap); }
+  const pl = drag.pl;
+  const nx = clamp(snap5(drag.ox+dx), 12, W-12), ny = clamp(snap5(drag.oy+dy), 12, H-12);
+  const ddx = nx-pl.x, ddy = ny-pl.y; if (!ddx && !ddy) return;
+  pl.x = nx; pl.y = ny;
+  const r = S.cur.routes[pl.id];
+  if (r) ['route','motion'].forEach(k => (r[k]||[]).forEach(q => { q[0] += ddx; q[1] += ddy; }));
+  S.sel = pl.id; drawField();
+});
+const endDrag = () => {
+  if (!drag) return;
+  if (!drag.moved){ S.sel = S.sel === drag.pl.id ? null : drag.pl.id; renderDes(); }
+  else { dirty(); renderDes(); }
+  drag = null;
+};
+F.addEventListener('pointerup', endDrag);
+F.addEventListener('pointercancel', endDrag);
+
+$('#addP').onclick = () => {
+  stopAnim(); pushUndo();
+  const used = new Set(S.cur.players.map(p => p.label));
+  const label = ['X','Z','H','Y','R','A','B','W','T','S'].find(l => !used.has(l)) || 'P';
+  const pl = {id:uid('p'), label, color:COLORS[label] || PALETTE[S.cur.players.length % PALETTE.length], x:120, y:270, read:0, d:false};
+  S.cur.players.push(pl); S.sel = pl.id; dirty(); renderDes();
+};
+$('#defense').onclick = () => {
+  stopAnim(); pushUndo();
+  if (S.cur.players.some(p => p.d)){
+    S.cur.players.filter(p => p.d).forEach(p => delete S.cur.routes[p.id]);
+    S.cur.players = S.cur.players.filter(p => !p.d);
+  } else {
+    const D = (x, y) => ({id:uid('d'), label:'', color:'#111827', x, y, read:0, d:true});
+    const ds = S.cur.players.filter(p => !['Q','C'].includes(p.label)).map(p => D(clamp(p.x + (p.x < 150 ? 12 : -12), 15, W-15), LOS-60));
+    ds.push(D(150, LOS-70)); ds.push(D(150, LOS-140));
+    S.cur.players.push(...ds);
+  }
+  S.sel = null; dirty(); renderDes();
+};
+$('#flip').onclick = () => {
+  stopAnim(); pushUndo();
+  S.cur.players.forEach(p => p.x = W - p.x);
+  Object.values(S.cur.routes).forEach(r => ['route','motion'].forEach(k => (r[k]||[]).forEach(q => q[0] = W - q[0])));
+  if (/Right/.test(S.cur.formation||'')) S.cur.formation = S.cur.formation.replace('Right','Left'); else if (/Left/.test(S.cur.formation||'')) S.cur.formation = S.cur.formation.replace('Left','Right');
+  dirty(); renderDes();
+};
+$('#run').onclick = () => {
+  if (anim){ stopAnim(); return; }
+  $('#run').textContent = '■ Stop';
+  runAnim(S.cur, pos => drawField(pos), () => { $('#run').textContent = '▶ Run play'; drawField(); });
+};
+
+/* ---------- present mode ---------- */
+const P = {list:[], i:0};
+function present(id, list){
+  P.list = list || filtered(); P.i = Math.max(0, P.list.findIndex(p => p.id === id));
+  $('#present').hidden = false; drawPresent();
+}
+function drawPresent(pos){
+  const p = P.list[P.i]; if (!p) return;
+  $('#pName').textContent = p.name || 'Untitled';
+  $('#pTags').innerHTML = (p.tags||[]).map(t => `<span class="chip" style="padding:2px 8px;font-size:12px">${esc(t)}</span>`).join(' ');
+  $('#pNotes').textContent = p.notes || '';
+  $('#pField').innerHTML = svgWrap(fieldSVG(p, {pos, fade: !!pos}));
+  $('#pCount').textContent = P.list.length > 1 ? `${P.i+1} of ${P.list.length}` : '';
+  $('#pPrev').disabled = P.i === 0; $('#pNext').disabled = P.i >= P.list.length-1;
+}
+const pGo = d => { stopAnim(); P.i = clamp(P.i + d, 0, P.list.length-1); drawPresent(); };
+$('#pPrev').onclick = () => pGo(-1);
+$('#pNext').onclick = () => pGo(1);
+$('#pClose').onclick = () => { stopAnim(); $('#present').hidden = true; };
+$('#pRun').onclick = () => {
+  if (anim){ stopAnim(); return; }
+  $('#pRun').textContent = '■ Stop';
+  runAnim(P.list[P.i], pos => drawPresent(pos), () => { $('#pRun').textContent = '▶ Run'; drawPresent(); });
+};
+let sw = null;
+$('#pField').addEventListener('pointerdown', e => { sw = e.clientX; });
+$('#pField').addEventListener('pointerup', e => { if (sw == null) return; const dx = e.clientX - sw; sw = null; if (Math.abs(dx) > 60) pGo(dx < 0 ? 1 : -1); else $('#pRun').click(); });
+document.addEventListener('keydown', e => {
+  if ($('#present').hidden) return;
+  if (e.key === 'ArrowRight') pGo(1); else if (e.key === 'ArrowLeft') pGo(-1); else if (e.key === 'Escape') $('#pClose').click(); else if (e.key === ' '){ e.preventDefault(); $('#pRun').click(); }
+});
+
+/* ---------- start ---------- */
+// Team password gate. Only a SHA-256 hash of the password is in this file.
+const PW_HASH = 'ea5e4d80c42a5d0c0797eec99a1cebc8771317d1e08907919995a71f2e4a0c43';
+async function sha(t){ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2,'0')).join(''); }
+let started = false;
+function start(){ if (started) return; started = true; $('#gate').hidden = true; renderLib(); renderAuth(); initDb(); }
+let saved = null; try { saved = localStorage.getItem('flagpw'); } catch(e){}
+if (saved === PW_HASH) start(); else setTimeout(() => $('#gatePw').focus(), 50);
+$('#gateForm').onsubmit = async e => {
+  e.preventDefault();
+  const h = await sha($('#gatePw').value.trim());
+  if (h === PW_HASH){ try { localStorage.setItem('flagpw', h); } catch(e){} start(); }
+  else { $('#gateErr').textContent = 'Wrong password — try again.'; $('#gatePw').select(); }
+};
+})();
+</script>
+</body>
+</html>
